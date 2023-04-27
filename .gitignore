@@ -618,3 +618,4 @@ MigrationBackup/
 htmlcov/
 .venv/
 .coverage
+poetry.lock
