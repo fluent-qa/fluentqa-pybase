@@ -4,15 +4,17 @@
 
 ![Coverage Report](assets/images/coverage.svg)
 
+</div>
 
 ## What is fluentqa-base?
+
 Fluent-QA Python Base Package, include:
 
 1. BaseDataModel: pydantic model for structured data
 2. builtin tools
 3. configuration tools
 
-</div>
+
 
 ## Very first steps
 
