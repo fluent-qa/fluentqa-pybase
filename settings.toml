@@ -1,0 +1,5 @@
+[default]
+log_level = 'INFO'
+db = {url="postgresql://root:qwerasdf@pg-dev.sh.hwc.cew.host:5432/qa"}
+structure = { test = "http://localhost:7077" }
+mitm = { recorded_url = "https://matrix-api,https://app-api.cew-,https://app-api.carbonnt,https://chain.carbonnt.com/explorer/api/blockGetByNumber"}
