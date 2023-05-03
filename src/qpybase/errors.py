@@ -1,7 +1,6 @@
 from typing import Any
 from typing import Union
 
-from qpybase.loggers.loggers import logger
 
 DEFAULT_ERROR_MESSAGE = "Undefined remote error"
 

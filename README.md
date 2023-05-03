@@ -54,3 +54,4 @@ git branch -M main
 git remote add origin https://github.com/fluent-qa/fluentqa-base.git
 git push -u origin main
 ```
+

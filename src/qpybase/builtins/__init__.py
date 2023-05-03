@@ -10,3 +10,4 @@ from .numbertools import *
 from .shelltools import *
 from .stringtools import *
 from .webtools import *
+from .pathtools import *
