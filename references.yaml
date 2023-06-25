@@ -48,3 +48,5 @@ data-workflow:
   - https://github.com/taskiq-python/taskiq.git
 spider:
   - https://github.com/ShichaoMa/structure_spider
+api-testing:
+  - https://github.com/chkware/cli.git
