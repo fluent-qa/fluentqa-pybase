@@ -6,8 +6,8 @@ tools:
   - https://github.com/cdgriffith/Reusables.git
   - https://github.com/flaggo/pydu.git
   - https://github.com/jodal/pykka.git
-  -  https://github.com/coady/multimethod.git
-
+  - https://github.com/coady/multimethod.git
+  - https://github.com/mahmoud/boltons
 logs:
   - https://github.com/ydf0509/nb_log.git
 
@@ -50,3 +50,5 @@ spider:
   - https://github.com/ShichaoMa/structure_spider
 api-testing:
   - https://github.com/chkware/cli.git
+
+
