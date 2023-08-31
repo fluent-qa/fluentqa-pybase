@@ -11,9 +11,7 @@ readme = "README.md"
 authors = ["fluentqa-base <hello@fluentqa-base.com>"]
 repository = "https://github.com/fluent-qa/fluentqa-pybase.git"
 homepage = "https://github.com/fluent-qa/fluentqa-pybase.git"
-
 keywords = ["python-libs"]  #! Update me
-
 classifiers = [  #! Update me
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -22,7 +20,7 @@ classifiers = [  #! Update me
   "Programming Language :: Python :: 3",
 ]
 packages = [
-    { include = "qpybase", from="src"},
+    { include = "qpybase", from="src"}
 ]
 
 [tool.poetry.dependencies]
