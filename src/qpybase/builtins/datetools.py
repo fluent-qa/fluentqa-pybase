@@ -1,9 +1,9 @@
-import math
 import typing
 
 import collections
 import datetime
 import datetime as dt
+import math
 
 from datetime import date
 from datetime import datetime
@@ -662,14 +662,17 @@ def precisedelta(
 
     return _("%s and %s") % (head, tail)
 
+
 """
 农历日期
 """
+from typing import Tuple
+from typing import Union
+
 import datetime
 
-from typing import Tuple, Union
-
 from calendar import monthrange
+
 
 """
 国际常用

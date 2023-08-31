@@ -1,23 +1,41 @@
+import types
+
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import Iterable
+from typing import Iterator
+from typing import Literal
+from typing import Mapping
+from typing import Optional
+from typing import Tuple
+from typing import TypeVar
+from typing import Union
+from typing import get_type_hints
+from typing import no_type_check
+from typing import overload as tp_overload
+
 import abc
 import collections
 import contextlib
 import functools
 import inspect
 import itertools
-import types
-from typing import Any, Callable, Dict, Iterable, Iterator, Literal, Mapping, Optional, Tuple
-from typing import TypeVar, Union, get_type_hints, no_type_check, overload as tp_overload
 
-__version__ = '1.9.1'
-Empty = types.new_class('*')
+
+__version__ = "1.9.1"
+Empty = types.new_class("*")
 
 
 def get_types(func: Callable) -> tuple:
     """Return evaluated type hints for positional required parameters in order."""
-    if not hasattr(func, '__annotations__'):
+    if not hasattr(func, "__annotations__"):
         return ()
     type_hints = get_type_hints(func)
-    positionals = {inspect.Parameter.POSITIONAL_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD}
+    positionals = {
+        inspect.Parameter.POSITIONAL_ONLY,
+        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+    }
     names = [
         param.name
         for param in inspect.signature(func).parameters.values()
@@ -45,16 +63,18 @@ class subtype(type):
     def __new__(cls, tp, *args):
         if tp is Any:
             return object
-        if hasattr(tp, '__supertype__'):  # isinstance(..., NewType) only supported >=3.10
+        if hasattr(
+            tp, "__supertype__"
+        ):  # isinstance(..., NewType) only supported >=3.10
             tp = tp.__supertype__
         if isinstance(tp, TypeVar):
             if not tp.__constraints__:
                 return object
             tp = Union[tp.__constraints__]
-        origin = getattr(tp, '__origin__', tp)
-        if hasattr(types, 'UnionType') and isinstance(tp, types.UnionType):
+        origin = getattr(tp, "__origin__", tp)
+        if hasattr(types, "UnionType") and isinstance(tp, types.UnionType):
             origin = Union  # `|` syntax added in 3.10
-        args = tuple(map(cls, getattr(tp, '__args__', args)))
+        args = tuple(map(cls, getattr(tp, "__args__", args)))
         if set(args) <= {object} and not (origin is tuple and args):
             return origin
         bases = (origin,) if type(origin) is type else ()
@@ -62,7 +82,7 @@ class subtype(type):
             bases = (subtype(Union[tuple(map(type, args))]),)
         if origin is Callable.__origin__ and args[:1] == (...,):
             args = args[1:]
-        namespace = {'__origin__': origin, '__args__': args}
+        namespace = {"__origin__": origin, "__args__": args}
         return type.__new__(cls, str(tp), bases, namespace)
 
     def __init__(self, tp, *args):
@@ -73,25 +93,31 @@ class subtype(type):
         return self.__origin__, self.__args__
 
     def __eq__(self, other) -> bool:
-        return hasattr(other, '__origin__') and self._getstate() == subtype._getstate(other)
+        return hasattr(other, "__origin__") and self._getstate() == subtype._getstate(
+            other
+        )
 
     def __hash__(self) -> int:
         return hash(self._getstate())
 
     def __subclasscheck__(self, subclass: type) -> bool:
-        origin = getattr(subclass, '__origin__', subclass)
-        args = getattr(subclass, '__args__', ())
+        origin = getattr(subclass, "__origin__", subclass)
+        args = getattr(subclass, "__args__", ())
         if origin is Union:
             return all(issubclass(cls, self) for cls in args)
         if self.__origin__ in (Union, type):
             return inspect.isclass(subclass) and issubclass(subclass, self.__args__)
         if Literal in (origin, self.__origin__):
-            return (origin is self.__origin__ is Literal) and set(args) <= set(self.__args__)
+            return (origin is self.__origin__ is Literal) and set(args) <= set(
+                self.__args__
+            )
         if self.__origin__ is Callable.__origin__:  # type: ignore
             return (
                 origin is Callable.__origin__  # type: ignore
-                and signature(self.__args__[-1:]) <= signature(args[-1:])  # covariant return
-                and signature(args[:-1]) <= signature(self.__args__[:-1])  # contravariant args
+                and signature(self.__args__[-1:])
+                <= signature(args[-1:])  # covariant return
+                and signature(args[:-1])
+                <= signature(self.__args__[:-1])  # contravariant args
             )
         nargs = len(self.__args__)
         if self.__origin__ is tuple:
@@ -131,17 +157,21 @@ class subtype(type):
         """
         if not isinstance(self, subtype):  # also called as a staticmethod
             return type(arg)
-        if hasattr(arg, '__orig_class__'):  # user-defined generic type
+        if hasattr(arg, "__orig_class__"):  # user-defined generic type
             return subtype(arg.__orig_class__)
         if self.__origin__ is type:  # a class argument is expected
             return arg
         if self.__origin__ is Literal:
-            if any(arg == param and type(arg) is type(param) for param in self.__args__):
+            if any(
+                arg == param and type(arg) is type(param) for param in self.__args__
+            ):
                 return subtype(Literal, arg)
             return type(arg)
         if self.__origin__ is Union:  # find the most specific match
             tps = (subtype.get_type(tp_arg, arg) for tp_arg in self.__args__)
-            tps = {tp for tp, tp_arg in zip(tps, self.__args__) if issubclass(tp, tp_arg)}
+            tps = {
+                tp for tp, tp_arg in zip(tps, self.__args__) if issubclass(tp, tp_arg)
+            }
             if not tps:
                 return type(arg)
             return functools.reduce(lambda x, y: x if issubclass(x, y) else y, tps)
@@ -168,7 +198,7 @@ class subtype(type):
 
 def distance(cls, subclass: type) -> int:
     """Return estimated distance between classes for tie-breaking."""
-    if getattr(cls, '__origin__', None) is Union:
+    if getattr(cls, "__origin__", None) is Union:
         return min(distance(arg, subclass) for arg in cls.__args__)
     mro = type.mro(subclass)
     return mro.index(cls if cls in mro else object)
@@ -200,7 +230,7 @@ class signature(tuple):
     def callable(self, *types) -> bool:
         """Check positional arity of associated function signature."""
         try:
-            return not hasattr(self, 'sig') or bool(self.sig.bind_partial(*types))
+            return not hasattr(self, "sig") or bool(self.sig.bind_partial(*types))
         except TypeError:
             return False
 
@@ -243,7 +273,7 @@ class multimethod(dict):
 
         Optionally call with types to return a decorator for unannotated functions.
         """
-        if len(args) == 1 and hasattr(args[0], '__annotations__'):
+        if len(args) == 1 and hasattr(args[0], "__annotations__"):
             multimethod.__init__(self, *args)
             return self if self.__name__ == args[0].__name__ else args[0]  # type: ignore
         return lambda func: self.__setitem__(args, func) or func
@@ -253,7 +283,9 @@ class multimethod(dict):
 
     def parents(self, types: tuple) -> set:
         """Find immediate parents of potential key."""
-        parents = {key for key in list(self) if isinstance(key, signature) and key < types}
+        parents = {
+            key for key in list(self) if isinstance(key, signature) and key < types
+        }
         return parents - {ancestor for parent in parents for ancestor in parent.parents}
 
     def clean(self):
@@ -284,7 +316,11 @@ class multimethod(dict):
             if subtype.subcheck(cls):  # switch to slower generic type checker
                 if type_checker is not type:
                     tp = type_checker.__self__
-                    args = {cls} | set(tp.__args__) if tp.__origin__ is Union else {cls, tp}
+                    args = (
+                        {cls} | set(tp.__args__)
+                        if tp.__origin__ is Union
+                        else {cls, tp}
+                    )
                     cls = subtype(Union[tuple(args)])
                 self.type_checkers[index] = cls.get_type
         super().__setitem__(types, func)
@@ -335,10 +371,10 @@ class multimethod(dict):
         """a descriptive docstring of all registered functions"""
         docs = []
         for key, func in self.items():
-            sig = getattr(key, 'sig', '')
+            sig = getattr(key, "sig", "")
             if func.__doc__:
-                docs.append(f'{func.__name__}{sig}\n    {func.__doc__}')
-        return '\n\n'.join(docs)
+                docs.append(f"{func.__name__}{sig}\n    {func.__doc__}")
+        return "\n\n".join(docs)
 
 
 RETURN = TypeVar("RETURN")
@@ -370,7 +406,11 @@ class multidispatch(multimethod, Dict[Tuple[type, ...], Callable[..., RETURN]]):
 
     def __call__(self, *args: Any, **kwargs: Any) -> RETURN:
         """Resolve and dispatch to best method."""
-        params = self.signature.bind(*args, **kwargs).args if (kwargs and self.signature) else args
+        params = (
+            self.signature.bind(*args, **kwargs).args
+            if (kwargs and self.signature)
+            else args
+        )
         func = self[tuple(func(arg) for func, arg in zip(self.type_checkers, params))]
         return func(*args, **kwargs)
 
@@ -404,7 +444,11 @@ class overload(dict):
     @classmethod
     def signature(cls, func: Callable) -> inspect.Signature:
         for name, value in get_type_hints(func).items():
-            if not callable(value) or isinstance(value, type) or hasattr(value, '__origin__'):
+            if (
+                not callable(value)
+                or isinstance(value, type)
+                or hasattr(value, "__origin__")
+            ):
                 func.__annotations__[name] = isa(value)
         return inspect.signature(func)
 
@@ -441,5 +485,5 @@ class multimeta(type):
 
         def __setitem__(self, key, value):
             if callable(value):
-                value = getattr(self.get(key), 'register', multimethod)(value)
+                value = getattr(self.get(key), "register", multimethod)(value)
             super().__setitem__(key, value)

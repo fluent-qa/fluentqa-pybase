@@ -11,6 +11,7 @@ class TaskRegister:
     register.list_tasks()
     register.run_tasks()
     """
+
     task_map: dict
 
     def __init__(self):
@@ -118,11 +119,16 @@ class Tasker(object):
                 self.free_tasks.append(task_id)
             elif not self.current_tasks[task_id]["proc"].is_alive():
                 self.free_tasks.append(task_id)
-            elif self.timeout and (self.current_tasks[task_id]["start"] + self.timeout) < time.time():
+            elif (
+                self.timeout
+                and (self.current_tasks[task_id]["start"] + self.timeout) < time.time()
+            ):
                 try:
                     self.current_tasks[task_id]["proc"].terminate()
                 except Exception as err:
-                    self.log.exception("Error while terminating " "task {} - {}".format(task_id, err))
+                    self.log.exception(
+                        "Error while terminating " "task {} - {}".format(task_id, err)
+                    )
                 self.free_tasks.append(task_id)
             else:
                 still_busy.append(task_id)
@@ -142,7 +148,9 @@ class Tasker(object):
 
     def _start_task(self, task_id, task):
         self.current_tasks[task_id]["proc"] = mp.Process(
-            target=self.perform_task, args=(task, self.result_queue), kwargs=self.task_kwargs
+            target=self.perform_task,
+            args=(task, self.result_queue),
+            kwargs=self.task_kwargs,
         )
         self.current_tasks[task_id]["start_time"] = time.time()
         self.current_tasks[task_id]["proc"].start()
@@ -215,7 +223,11 @@ class Tasker(object):
     def get_state(self):
         """Get general information about the state of the class"""
         return {
-            "started": (True if self.background_process and self.background_process.is_alive() else False),
+            "started": (
+                True
+                if self.background_process and self.background_process.is_alive()
+                else False
+            ),
             "paused": self._pause.value,
             "stopped": self._end.value,
             "tasks": len(self.current_tasks),
@@ -239,7 +251,10 @@ class Tasker(object):
             try:
                 new_size = int(cmd.split(" ")[-1])
             except Exception as err:
-                self.log.warning("Received improperly formatted command tasking" " '{0}' - {1}".format(cmd, err))
+                self.log.warning(
+                    "Received improperly formatted command tasking"
+                    " '{0}' - {1}".format(cmd, err)
+                )
             else:
                 self.change_task_size(new_size)
         else:
@@ -260,7 +275,7 @@ class Tasker(object):
     def main_loop(self, stop_at_empty=False):
         """Blocking function that can be run directly, if so would probably
         want to specify 'stop_at_empty' to true, or have a separate process
-        adding items to the queue. """
+        adding items to the queue."""
         try:
             while True:
                 self.hook_pre_command()
@@ -289,7 +304,9 @@ class Tasker(object):
                         try:
                             self._start_task(task_id, task)
                         except Exception as err:
-                            self.log.exception("Could not start task {0} -" " {1}".format(task_id, err))
+                            self.log.exception(
+                                "Could not start task {0} -" " {1}".format(task_id, err)
+                            )
                         else:
                             self.hook_post_task()
         finally:
@@ -298,6 +315,8 @@ class Tasker(object):
     def run(self):
         """Start the main loop as a background process. *nix only"""
         if win_based:
-            raise NotImplementedError("Please run main_loop, " "backgrounding not supported on Windows")
+            raise NotImplementedError(
+                "Please run main_loop, " "backgrounding not supported on Windows"
+            )
         self.background_process = mp.Process(target=self.main_loop)
         self.background_process.start()

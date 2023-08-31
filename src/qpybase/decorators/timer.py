@@ -49,10 +49,13 @@ def timer(store: bool = False, round_off: int = 10) -> "function":
         return wrapper
 
     return inner_timer
+
+
 import contextlib
 import functools
 import pstats
 import time
+
 from cProfile import Profile
 
 
@@ -100,7 +103,9 @@ def prof_context(sort_by="cumtime", limit=10, timer=time.perf_counter):
         s = pstats.Stats(p).sort_stats(sort_by)
         s.print_stats(limit)
 
+
 import time
+
 from functools import wraps
 
 
@@ -120,7 +125,9 @@ def timethis(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        msg = "{func_name} :\t 耗时 {last_sec}".format(func_name=func_name, last_sec=(end - start))
+        msg = "{func_name} :\t 耗时 {last_sec}".format(
+            func_name=func_name, last_sec=(end - start)
+        )
         # TODO: 以后有机会引入日志系统,现在先用打印将就着
         print(msg)
         return result

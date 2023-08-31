@@ -1,5 +1,6 @@
 import typing as t
 
+
 def task(*args, **options: t.Any) -> t.Callable:
     r"""
     Function decorator to create a Pykefile task with a name
@@ -23,6 +24,7 @@ def task(*args, **options: t.Any) -> t.Callable:
             will be passed to the task function as string arguments.
 
     """
+
     def decorator(func: t.Callable) -> t.Callable:
         try:
             name = args[0]
@@ -55,8 +57,7 @@ def get_task(target: t.Text) -> t.Mapping:
 
 
 def exec_task(
-    task: t.Union[t.Mapping, t.Text],
-    args: t.Optional[t.Iterable] = []
+    task: t.Union[t.Mapping, t.Text], args: t.Optional[t.Iterable] = []
 ) -> t.Any:
     if isinstance(task, t.Text):
         task: t.Mapping = get_task(task)
@@ -72,6 +73,6 @@ def exec_task(
                 raise e.NoTaskFoundError(i)
 
     if opts.get("pattern"):
-        rlist = re.findall(opts["pattern"], ' '.join(args))
+        rlist = re.findall(opts["pattern"], " ".join(args))
 
     return task["f"](*rlist)

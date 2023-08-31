@@ -3,10 +3,11 @@ adapted from: https://github.com/said-ali/iterable_orm
 """
 from __future__ import annotations
 
+from typing import TypeVar
+
 from functools import reduce
 from itertools import filterfalse
 from operator import attrgetter
-from typing import TypeVar
 
 
 class ObjectDoesNotExist(Exception):
@@ -24,14 +25,18 @@ def lookups(filter):
         "lt": lambda obj_value, value: obj_value < value,
         "lte": lambda obj_value, value: obj_value <= value,
         "startswith": lambda obj_value, value: obj_value.startswith(value),
-        "istartswith": lambda obj_value, value: obj_value.lower().startswith(value.lower()),
+        "istartswith": lambda obj_value, value: obj_value.lower().startswith(
+            value.lower()
+        ),
         "endswith": lambda obj_value, value: obj_value.endswith(value),
         "contains": lambda obj_value, value: value in obj_value,
         "icontains": lambda obj_value, value: value.lower() in obj_value.lower(),
         "not_equal_to": lambda obj_value, value: obj_value != value,
         "in": lambda obj_value, value: obj_value in value,
         "not_in": lambda obj_value, value: obj_value not in value,
-        "range": lambda obj_value, range_values: range_values[0] <= obj_value <= range_values[1],
+        "range": lambda obj_value, range_values: range_values[0]
+        <= obj_value
+        <= range_values[1],
         "date_range": lambda obj_value, range_values: range_values[0].isoformat()
         <= obj_value.isoformat()
         <= range_values[1].isoformat(),
@@ -109,7 +114,9 @@ class MemoryRepo:
         return self._copy(filter(self._filter_or_exclude(**kwargs), self._queryset))
 
     def exclude(self, **kwargs) -> MemoryRepo:
-        return self._copy(filterfalse(self._filter_or_exclude(**kwargs), self._queryset))
+        return self._copy(
+            filterfalse(self._filter_or_exclude(**kwargs), self._queryset)
+        )
 
     def exists(self) -> bool:
         return bool(self)
@@ -151,4 +158,6 @@ class MemoryRepo:
             raise ObjectDoesNotExist("Matching query does not exist.")
 
         if len(clone) > 1:
-            raise MultipleObjectsReturned("get() returned more than one -- it returned {num}!".format(num=num))
+            raise MultipleObjectsReturned(
+                "get() returned more than one -- it returned {num}!".format(num=num)
+            )

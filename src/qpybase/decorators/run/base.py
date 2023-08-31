@@ -2,7 +2,6 @@ import os
 import sys
 
 from . import __doc__ as dcs
-
 from .task import *
 
 
@@ -57,7 +56,7 @@ def run() -> t.NoReturn:
 
     for i, value in enumerate(sys.argv):
         if value == "---":
-            args = sys.argv[i + 2:]
+            args = sys.argv[i + 2 :]
 
     if args == list(["--help"]):
         print(dcs)
@@ -71,7 +70,7 @@ def run() -> t.NoReturn:
         else:
             exec_task(todo, args[0:])
     else:
-        task = get_task(' '.join(args))
+        task = get_task(" ".join(args))
 
         if not task:
             raise e.NoTaskFoundError()

@@ -46,7 +46,7 @@ def processor(
                     PROCESSORS = 8
                 with Pool(int(PROCESSORS)) as exe:
                     processes = list()
-                    for (i, j) in zip(funcs.keys(), funcs.values()):
+                    for i, j in zip(funcs.keys(), funcs.values()):
                         if get_result is False:
                             exe.starmap_async(i, j).get()
                         else:

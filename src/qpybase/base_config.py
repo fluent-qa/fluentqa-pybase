@@ -1,5 +1,6 @@
 from dynaconf import Dynaconf
 
+
 settings = Dynaconf(
     envar_prefix="fluent",
     settings_file=["configs/settings.toml", "configs/.secrets.toml", "settings.toml"],

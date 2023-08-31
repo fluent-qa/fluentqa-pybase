@@ -1,10 +1,16 @@
+from typing import Callable
+from typing import Tuple
+
 import os
 import subprocess
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed, ProcessPoolExecutor, wait
+
+from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import as_completed
+from concurrent.futures import wait
 from functools import partial
 from multiprocessing import pool
-from typing import Callable, Tuple
 
 
 def multi_thread_submit(
@@ -15,7 +21,9 @@ def multi_thread_submit(
     executor = ThreadPoolExecutor(max_workers=max_workers)
     future_list = []
     for item in items:
-        future_list.append(executor.submit(func, *item["args"], **item["kwargs"]))  # .add_done_callback()
+        future_list.append(
+            executor.submit(func, *item["args"], **item["kwargs"])
+        )  # .add_done_callback()
     done_iter = as_completed(future_list)
     executor.shutdown(wait=True)
     return done_iter
@@ -30,7 +38,9 @@ def multi_process_submit(
 
     future_list = []
     for item in items:
-        future_list.append(executor.submit(func, *item["args"], **item["kwargs"]))  # .add_done_callback()
+        future_list.append(
+            executor.submit(func, *item["args"], **item["kwargs"])
+        )  # .add_done_callback()
     done_iter = as_completed(future_list)
     executor.shutdown(wait=True)
     return done_iter
@@ -38,11 +48,11 @@ def multi_process_submit(
 
 def run_threaded(fns_args: list[(Callable, Tuple)], max_threads=None):
     """
-        Run a list of tasks concurrently, and return their results as
-        a list in the same order. A task is a 2-tuple of the function and an
-        n-tuple of the function's n arguments.
-        Remember: A 1-tuple needs a trailing comma, eg. (x,)
-        Return: A list of results, in the order of the input tasks.
+    Run a list of tasks concurrently, and return their results as
+    a list in the same order. A task is a 2-tuple of the function and an
+    n-tuple of the function's n arguments.
+    Remember: A 1-tuple needs a trailing comma, eg. (x,)
+    Return: A list of results, in the order of the input tasks.
     """
     if max_threads is None:
         max_threads = len(fns_args)
@@ -56,7 +66,13 @@ def run_threaded(fns_args: list[(Callable, Tuple)], max_threads=None):
 
 
 def run(
-    command, input=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=None, copy_local_env=False, **kwargs
+    command,
+    input=None,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    timeout=None,
+    copy_local_env=False,
+    **kwargs,
 ):
     """
     Cross platform compatible subprocess with CompletedProcess return.
@@ -95,7 +111,15 @@ def run(
         env = kwargs.get("env")
 
     if sys.version_info >= (3, 5):
-        return subprocess.run(command, input=input, stdout=stdout, stderr=stderr, timeout=timeout, env=env, **kwargs)
+        return subprocess.run(
+            command,
+            input=input,
+            stdout=stdout,
+            stderr=stderr,
+            timeout=timeout,
+            env=env,
+            **kwargs,
+        )
 
     # Created here instead of root level as it should never need to be
     # manually created or referenced
@@ -119,15 +143,19 @@ def run(
 
         def check_returncode(self):
             if self.returncode:
-                raise subprocess.CalledProcessError(self.returncode, self.args, self.stdout)
+                raise subprocess.CalledProcessError(
+                    self.returncode, self.args, self.stdout
+                )
 
     proc = subprocess.Popen(command, stdout=stdout, stderr=stderr, env=env, **kwargs)
     out, err = proc.communicate(input=input, timeout=timeout)
     return CompletedProcess(command, proc.returncode, out, err)
 
 
-def run_in_pool(target, iterable, threaded=True, processes=4, asynchronous=False, target_kwargs=None):
-    """ Run a set of iterables to a function in a Threaded or MP Pool.
+def run_in_pool(
+    target, iterable, threaded=True, processes=4, asynchronous=False, target_kwargs=None
+):
+    """Run a set of iterables to a function in a Threaded or MP Pool.
 
     .. code: python
 
@@ -153,7 +181,9 @@ def run_in_pool(target, iterable, threaded=True, processes=4, asynchronous=False
 
     p = my_pool(processes)
     try:
-        results = p.map_async(target, iterable) if asynchronous else p.map(target, iterable)
+        results = (
+            p.map_async(target, iterable) if asynchronous else p.map(target, iterable)
+        )
     finally:
         p.close()
         p.join()

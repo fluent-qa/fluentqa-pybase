@@ -5,6 +5,7 @@ render by jinja2 template engine
 import json
 
 from jinja2 import Template
+
 from .datetools import get_date_by_timedelta
 from .randomtools import faker
 from .randomtools import random_str

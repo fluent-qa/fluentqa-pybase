@@ -19,6 +19,7 @@ from .i18ntools import _pgettext as P_
 from .i18ntools import decimal_separator
 from .i18ntools import thousands_separator
 
+
 if TYPE_CHECKING:
     if sys.version_info >= (3, 10):
         from typing import TypeAlias
@@ -177,7 +178,7 @@ def intcomma(value: NumberOrString, ndigits: int | None = None) -> str:
         orig = new
 
 
-powers = [10 ** x for x in (3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 100)]
+powers = [10**x for x in (3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 100)]
 human_powers = (
     NS_("thousand", "thousand"),
     NS_("million", "million"),
@@ -254,8 +255,8 @@ def intword(value: NumberOrString, format: str = "%.1f") -> str:
                 return (
                     negative_prefix
                     + " ".join(
-                    [format, _ngettext(singular, plural, math.ceil(chopped))]
-                )
+                        [format, _ngettext(singular, plural, math.ceil(chopped))]
+                    )
                 ) % chopped
 
             singular, plural = human_powers[ordinal_ - 1]

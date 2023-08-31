@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-import collections
 from typing import Any
 from typing import Iterable
+
+import collections
+
 
 __all__ = ["flat"]
 
@@ -50,9 +52,11 @@ def remove_duplicates(seq: list):
     seen_add = seen.add
     return [x for x in seq if not (x in seen or seen_add(x))]
 
+
 import collections
 import itertools
 import random
+
 from operator import itemgetter
 
 
@@ -176,7 +180,9 @@ def partition(pred, iterable):
 def powerset(iterable):
     """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
     s = list(iterable)
-    return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s) + 1))
+    return itertools.chain.from_iterable(
+        itertools.combinations(s, r) for r in range(len(s) + 1)
+    )
 
 
 def unique_everseen(iterable, key=None):

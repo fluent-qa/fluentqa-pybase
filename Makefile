@@ -45,7 +45,7 @@ codestyle:
 	poetry run black --config pyproject.toml ./
 
 .PHONY: formatting
-formatting: codestyle
+formatting: codestyle check-codestyle
 
 .PHONY: lint
 lint: test check-codestyle codestyle

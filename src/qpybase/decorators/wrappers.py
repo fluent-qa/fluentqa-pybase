@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-import time
-from threading import Lock
-from functools import wraps
-from collections import defaultdict
+
 import logging
+import time
+
+from collections import defaultdict
+from functools import wraps
+from threading import Lock
+
 
 try:
     import queue as _queue
@@ -38,7 +41,13 @@ def _add_args(message, *args, **kwargs):
     return message
 
 
-def unique(max_retries=10, wait=0, alt_return="-no_alt_return-", exception=Exception, error_text=None):
+def unique(
+    max_retries=10,
+    wait=0,
+    alt_return="-no_alt_return-",
+    exception=Exception,
+    error_text=None,
+):
     """
     Wrapper. Makes sure the function's return value has not been returned before
     or else it run with the same inputs again.
@@ -71,7 +80,11 @@ def unique(max_retries=10, wait=0, alt_return="-no_alt_return-", exception=Excep
     def func_wrap(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            msg = error_text if error_text else "No result was unique for function '{func}'"
+            msg = (
+                error_text
+                if error_text
+                else "No result was unique for function '{func}'"
+            )
             if not error_text:
                 msg = _add_args(msg, *args, **kwargs)
             for i in range(max_retries):
@@ -84,7 +97,9 @@ def unique(max_retries=10, wait=0, alt_return="-no_alt_return-", exception=Excep
             else:
                 if alt_return != "-no_alt_return-":
                     return alt_return
-                raise exception(msg.format(func=func.__name__, args=args, kwargs=kwargs))
+                raise exception(
+                    msg.format(func=func.__name__, args=args, kwargs=kwargs)
+                )
 
         return wrapper
 
@@ -173,7 +188,11 @@ def time_it(log=None, message=None, append=None):
         @wraps(func)
         def wrapper(*args, **kwargs):
             # Can't use nonlocal in 2.x
-            msg = message if message else "Function '{func}' took a total of {seconds} seconds"
+            msg = (
+                message
+                if message
+                else "Function '{func}' took a total of {seconds} seconds"
+            )
             if not message:
                 msg = _add_args(msg, *args, **kwargs)
 
@@ -184,9 +203,15 @@ def time_it(log=None, message=None, append=None):
             finally:
                 total_time = time_func() - start_time
 
-                time_string = msg.format(func=func.__name__, seconds=total_time, args=args, kwargs=kwargs)
+                time_string = msg.format(
+                    func=func.__name__, seconds=total_time, args=args, kwargs=kwargs
+                )
                 if log:
-                    my_logger = logging.getLogger(log) if isinstance(log, str) else reusables_logger
+                    my_logger = (
+                        logging.getLogger(log)
+                        if isinstance(log, str)
+                        else reusables_logger
+                    )
                     my_logger.info(time_string)
                 else:
                     print(time_string)
@@ -233,7 +258,12 @@ def queue_it(queue=g_queue, **put_args):
 
 
 def log_exception(
-    log="reusables", message=None, exceptions=(Exception,), level=logging.ERROR, show_traceback=True, suppress=False
+    log="reusables",
+    message=None,
+    exceptions=(Exception,),
+    level=logging.ERROR,
+    show_traceback=True,
+    suppress=False,
 ):
     """
     Wrapper. Log the traceback to any exceptions raised. Possible to raise
@@ -281,7 +311,9 @@ def log_exception(
             except exceptions as err:
                 logger.log(
                     level,
-                    msg.format(func=func.__name__, err=str(err), args=args, kwargs=kwargs),
+                    msg.format(
+                        func=func.__name__, err=str(err), args=args, kwargs=kwargs
+                    ),
                     exc_info=show_traceback,
                 )
                 if not suppress:
@@ -328,7 +360,12 @@ def catch_it(exceptions=(Exception,), default=None, handler=None):
 
 
 def retry_it(
-    exceptions=(Exception,), tries=10, wait=0, handler=None, raised_exception=RuntimeError, raised_message=None
+    exceptions=(Exception,),
+    tries=10,
+    wait=0,
+    handler=None,
+    raised_exception=RuntimeError,
+    raised_message=None,
 ):
     """
     Retry a function if an exception is raised, or if output_check returns
@@ -347,7 +384,11 @@ def retry_it(
     def func_wrapper(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            msg = raised_message if raised_message else "Max retries exceeded for function '{func}'"
+            msg = (
+                raised_message
+                if raised_message
+                else "Max retries exceeded for function '{func}'"
+            )
             if not raised_message:
                 msg = _add_args(msg, *args, **kwargs)
             try:
@@ -356,19 +397,27 @@ def retry_it(
                 if tries:
                     if wait:
                         time.sleep(wait)
-                    return retry_it(exceptions=exceptions, tries=tries - 1, handler=handler, wait=wait)(func)(
-                        *args, **kwargs
-                    )
+                    return retry_it(
+                        exceptions=exceptions,
+                        tries=tries - 1,
+                        handler=handler,
+                        wait=wait,
+                    )(func)(*args, **kwargs)
                 if raised_exception:
-                    exc = raised_exception(msg.format(func=func.__name__, args=args, kwargs=kwargs))
+                    exc = raised_exception(
+                        msg.format(func=func.__name__, args=args, kwargs=kwargs)
+                    )
                     exc.__cause__ = None
                     raise exc
             else:
                 if handler:
                     if not handler(result):
-                        return retry_it(exceptions=exceptions, tries=tries - 1, handler=handler, wait=wait)(func)(
-                            *args, **kwargs
-                        )
+                        return retry_it(
+                            exceptions=exceptions,
+                            tries=tries - 1,
+                            handler=handler,
+                            wait=wait,
+                        )(func)(*args, **kwargs)
                 return result
 
         return wrapper

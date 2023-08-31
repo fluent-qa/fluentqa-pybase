@@ -40,7 +40,6 @@ def threader(funcs: dict, func_result: bool = False) -> "function":
     def th(func: "function") -> "function":
         @wraps(func)
         def wrapper(*args: "arguments", **kwargs: "keyword arguments") -> "function":
-
             workers = 0
             for arg in funcs.values():
                 workers = workers + len(arg)
@@ -48,7 +47,7 @@ def threader(funcs: dict, func_result: bool = False) -> "function":
             with ThreadPoolExecutor(max_workers=workers) as exe:
 
                 def processes():
-                    for (i, j) in zip(funcs.keys(), funcs.values()):
+                    for i, j in zip(funcs.keys(), funcs.values()):
                         for k in j:
                             if str(type(k)) == "<class 'dict'>":
                                 yield exe.submit(i, **k)
