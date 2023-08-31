@@ -77,5 +77,4 @@ jobs:
       - name: Run tests
         run: |
           make test
-          coverage report
           make cleanup
