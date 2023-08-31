@@ -1,5 +1,5 @@
+from qpybase.errors import GeneralError
 
-from qpybase import GeneralError
 from rich import print
 def test_generic_error():
 

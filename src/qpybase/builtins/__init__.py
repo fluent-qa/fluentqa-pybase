@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from .datetools import *
-from .exceltools import *
 from .filesizetools import *
 from .i18ntools import *
 from .iotools import *
