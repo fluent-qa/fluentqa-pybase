@@ -13,9 +13,8 @@ repository = "https://github.com/fluent-qa/fluentqa-base"
 homepage = "https://github.com/fluent-qa/fluentqa-base"
 
 # Keywords description https://python-poetry.org/docs/pyproject/#keywords
-keywords = []  #! Update me
+keywords = ["python-libs"]  #! Update me
 
-# Pypi classifiers: https://pypi.org/classifiers/
 classifiers = [  #! Update me
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
