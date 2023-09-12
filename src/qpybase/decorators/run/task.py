@@ -1,4 +1,7 @@
+import re
 import typing as t
+
+from qpybase.decorators.run import tasks
 
 
 def task(*args, **options: t.Any) -> t.Callable:
@@ -69,7 +72,7 @@ def exec_task(
         for i in opts["deps"]:
             try:
                 tasks[i]["f"]()
-            except KeyError:
+            except KeyError as e:
                 raise e.NoTaskFoundError(i)
 
     if opts.get("pattern"):

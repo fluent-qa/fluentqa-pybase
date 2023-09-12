@@ -1,7 +1,11 @@
+from typing import Any
+
+import datetime
 import random
+import string
+import uuid
 
 from faker import Faker
-
 
 __all__ = ["faker", "random_str", "random_unicode", "random_GBK2312"]
 
@@ -26,13 +30,6 @@ def random_str(length=4):
         result.append(random.choice([random_unicode])())
     return "".join(result)
 
-
-from typing import Any
-
-import datetime
-import random
-import string
-import uuid
 
 
 DEFAULT_RAN_LENGTH = 8
