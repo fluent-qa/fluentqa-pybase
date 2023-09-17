@@ -22,7 +22,6 @@ import functools
 import inspect
 import itertools
 
-
 __version__ = "1.9.1"
 Empty = types.new_class("*")
 
