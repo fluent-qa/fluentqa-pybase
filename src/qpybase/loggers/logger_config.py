@@ -22,7 +22,6 @@ from rich.logging import RichHandler
 from rich.text import Text
 from rich.theme import Theme
 
-
 for lv in Core().levels.values():
     logging.addLevelName(lv.no, lv.name)
 
@@ -137,7 +136,7 @@ def install(
             {
                 "sink": LoguruRichHandler(
                     console=rich_console
-                    or Console(
+                            or Console(
                         theme=Theme(
                             {
                                 "logging.level.success": "green",

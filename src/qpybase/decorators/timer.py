@@ -1,9 +1,20 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+
+
 import contextlib
+import functools
+import pstats
+import time
+
+from cProfile import Profile
+
+__all__ = ["profile_timer", "timer"]
+
+from typing import Callable
 
 
-def timer(store: bool = False, round_off: int = 10) -> "function":
+def timer(store: bool = False, round_off: int = 10) -> Callable:
     """
     Decorator which print execution time of any function.
 
@@ -16,8 +27,7 @@ def timer(store: bool = False, round_off: int = 10) -> "function":
         Function's value if store=False.
 
     Example:
-        from utile.Timer import timer
-        import time
+
         @timer()
         def foo():
             time.sleep(1) # function sleeping for 1 second
@@ -51,20 +61,10 @@ def timer(store: bool = False, round_off: int = 10) -> "function":
     return inner_timer
 
 
-import contextlib
-import functools
-import pstats
-import time
-
-from cProfile import Profile
-
-
-def prof_deco(sort_by="cumtime", limit=10, timer=time.perf_counter):
+def profile_timer(sort_by="cumtime", limit=10):
     """
-    参考了雨痕的 <Python学习笔记>
     :param sort_by:
     :param limit:
-    :param timer:
     :return:
     """
 
@@ -86,12 +86,10 @@ def prof_deco(sort_by="cumtime", limit=10, timer=time.perf_counter):
 
 
 @contextlib.contextmanager
-def prof_context(sort_by="cumtime", limit=10, timer=time.perf_counter):
+def prof_context(sort_by="cumtime", limit=10):
     """
-    参考了雨痕的 <Python学习笔记>
     :param sort_by:
     :param limit:
-    :param timer:
     :return:
     """
     p = Profile()
@@ -102,37 +100,6 @@ def prof_context(sort_by="cumtime", limit=10, timer=time.perf_counter):
         p.disable()
         s = pstats.Stats(p).sort_stats(sort_by)
         s.print_stats(limit)
-
-
-import time
-
-from functools import wraps
-
-
-def timethis(func):
-    """
-    Decorator that reports the execution time.
-    """
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        """
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        func_name = func.__name__
-        start = time.time()
-        result = func(*args, **kwargs)
-        end = time.time()
-        msg = "{func_name} :\t 耗时 {last_sec}".format(
-            func_name=func_name, last_sec=(end - start)
-        )
-        # TODO: 以后有机会引入日志系统,现在先用打印将就着
-        print(msg)
-        return result
-
-    return wrapper
 
 
 # http://python3-cookbook.readthedocs.io/zh_CN/latest/c13/p13_making_stopwatch_timer.html
