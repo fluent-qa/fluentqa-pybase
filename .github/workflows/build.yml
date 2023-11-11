@@ -9,7 +9,7 @@ jobs:
       #----------------------------------------------
       #       check-out repo and set-up python
       #----------------------------------------------
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
       #----------------------------------------------
       #        load pip cache if cache exists
@@ -36,7 +36,7 @@ jobs:
       #       check-out repo and set-up python
       #----------------------------------------------
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up python ${{ matrix.python-version }}
         id: setup-python
         uses: actions/setup-python@v4
