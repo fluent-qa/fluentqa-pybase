@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "qpybase"
 version = "0.1.0"
-description = "Awesome `fluentqa_base` is a Python cli/package "
+description = "`fluentqa_base` is a Python libs "
 readme = "README.md"
 authors = ["fluentqa-base <hello@fluentqa-base.com>"]
 repository = "https://github.com/fluent-qa/fluentqa-pybase.git"
@@ -127,7 +127,7 @@ addopts = [
 source = ["tests"]
 
 [coverage.paths]
-source = "fluentqa-base"
+source = "qpybase"
 
 [coverage.run]
 branch = true
