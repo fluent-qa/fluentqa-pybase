@@ -25,6 +25,7 @@ build-remove:
 	rm -rf dist/
 	rm temp_java.txt
 	rm temp-1.txt
+	rm -rf htmlcov/
 
 .PHONY: cleanup
 cleanup: pycache-remove dsstore-remove mypycache-remove ipynbcheckpoints-remove pytestcache-remove build-remove
