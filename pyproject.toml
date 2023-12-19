@@ -30,7 +30,7 @@ rich = "^13.3.4"
 structlog = "^23.1.0"
 inflection = "^0.5.1"
 dynaconf = "^3.1.12"
-Faker = "^20.0.0"
+Faker = "^21.0.0"
 boltons = "^23.0.0"
 
 
